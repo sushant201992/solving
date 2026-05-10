@@ -1,6 +1,13 @@
 import { useState, useMemo, useRef, useCallback } from "react";
 import * as XLSX from "xlsx";
 
+/* ─── Google Analytics Helper ───────────────────────────────────── */
+const trackEvent = (eventName, eventParams = {}) => {
+  if (typeof window !== 'undefined' && window.gtag) {
+    window.gtag('event', eventName, eventParams);
+  }
+};
+
 /* ─── Theme Tokens ──────────────────────────────────────────────── */
 const DARK = {
   bg:         "#030810",
@@ -739,7 +746,10 @@ export default function App() {
             <div style={{ fontSize:9, color:T.faint, letterSpacing:1.8, fontWeight:600 }}>SMART INVESTMENT CALCULATOR</div>
           </div>
           <div style={{ marginLeft:"auto", display:"flex", alignItems:"center", gap:10 }}>
-            <ThemeToggle dark={dark} onToggle={()=>setDark(!dark)} T={T} />
+            <ThemeToggle dark={dark} onToggle={()=>{ 
+              setDark(!dark); 
+              trackEvent('theme_toggle', { theme: !dark ? 'dark' : 'light' });
+            }} T={T} />
             <div style={{ display:"flex", alignItems:"center", gap:4 }}>
               <div style={{ width:6, height:6, borderRadius:99, background:T.emerald, boxShadow:`0 0 5px ${T.emerald}`, animation:"pulse 2s infinite" }}/>
               <span style={{ fontSize:10, color:T.emerald, fontWeight:700 }}>LIVE</span>
@@ -750,7 +760,11 @@ export default function App() {
         {/* ── Tabs ── */}
         <div style={{ display:"flex", margin:"14px 16px 0", background:dark?"#080F1C":"#E6F7F1", borderRadius:13, padding:4, gap:3 }}>
           {tabs.map(t=>(
-            <button key={t.id} onClick={()=>{ setTab(t.id); setShowTable(false); }} style={{
+            <button key={t.id} onClick={()=>{ 
+              setTab(t.id); 
+              setShowTable(false); 
+              trackEvent('calculator_tab_switch', { calculator_type: t.id });
+            }} style={{
               flex:1, padding:"9px 2px", borderRadius:10, border:"none", cursor:"pointer",
               background:tab===t.id?`linear-gradient(135deg,${T.cyan}22,${T.cyan}11)`:"transparent",
               color:tab===t.id?T.cyan:T.faint,
@@ -924,7 +938,15 @@ export default function App() {
         <div style={{ margin:"12px 16px 0" }}>
           <div className="rgb-card">
             <div className="rgb-card-inner" style={{ background:T.cardBg, padding:"4px" }}>
-              <button onClick={()=>downloadExcel(result,tab,excelParams)} style={{
+              <button onClick={()=>{
+                downloadExcel(result,tab,excelParams);
+                trackEvent('excel_download', { 
+                  calculator_type: tab,
+                  invested: result.invested,
+                  returns: result.returns,
+                  total_value: result.fv
+                });
+              }} style={{
                 width:"100%", padding:"13px", background:"transparent", border:"none", borderRadius:12,
                 color:T.cyan, fontSize:15, fontWeight:700, cursor:"pointer",
                 fontFamily:"'DM Sans',sans-serif", display:"flex", alignItems:"center", justifyContent:"center", gap:10,
