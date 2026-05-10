@@ -757,6 +757,112 @@ export default function App() {
           </div>
         </div>
 
+        {/* ── Blog Section ── */}
+        <div style={{ margin:"16px 16px 0" }}>
+          <div className="rgb-card">
+            <div className="rgb-card-inner" style={{ background:T.cardBg, padding:"16px" }}>
+              <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:12 }}>
+                <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+                  <span style={{ fontSize:16 }}>📝</span>
+                  <span style={{ fontSize:15, fontWeight:700, color:T.primary }}>Latest Articles</span>
+                </div>
+                <a href="#" style={{ fontSize:11, color:T.cyan, fontWeight:600, textDecoration:"none" }}>View All →</a>
+              </div>
+              
+              <div style={{ display:"flex", gap:10, overflowX:"auto", scrollbarWidth:"none", msOverflowStyle:"none" }}>
+                {[
+                  { 
+                    title: "Understanding SIP Returns",
+                    excerpt: "Learn how systematic investment plans generate compound returns over time",
+                    date: "Dec 15, 2024",
+                    icon: "📈",
+                    tag: "SIP Guide"
+                  },
+                  { 
+                    title: "Step-up SIP Strategy",
+                    excerpt: "Increase your monthly investments to accelerate wealth creation",
+                    date: "Dec 10, 2024",
+                    icon: "🚀",
+                    tag: "Advanced"
+                  },
+                  { 
+                    title: "Lumpsum vs SIP: Which is Better?",
+                    excerpt: "Compare investment strategies for different market conditions",
+                    date: "Dec 5, 2024",
+                    icon: "⚖️",
+                    tag: "Comparison"
+                  }
+                ].map((post, i) => (
+                  <a 
+                    key={i} 
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      trackEvent('blog_article_click', { article_title: post.title });
+                    }}
+                    style={{ 
+                      minWidth:260, 
+                      background:T.surfaceAlt, 
+                      border:`1px solid ${T.border}`, 
+                      borderRadius:12, 
+                      padding:14,
+                      textDecoration:"none",
+                      display:"block",
+                      transition:"all 0.2s",
+                      cursor:"pointer"
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.transform = "translateY(-2px)"}
+                    onMouseLeave={(e) => e.currentTarget.style.transform = "translateY(0)"}
+                  >
+                    <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:8 }}>
+                      <span style={{ fontSize:20 }}>{post.icon}</span>
+                      <span style={{ 
+                        fontSize:9, 
+                        color:T.cyan, 
+                        background:`${T.cyan}15`, 
+                        padding:"2px 8px", 
+                        borderRadius:12, 
+                        fontWeight:600,
+                        letterSpacing:0.3
+                      }}>
+                        {post.tag}
+                      </span>
+                    </div>
+                    <h3 style={{ 
+                      fontSize:13, 
+                      fontWeight:700, 
+                      color:T.primary, 
+                      marginBottom:6, 
+                      lineHeight:1.3
+                    }}>
+                      {post.title}
+                    </h3>
+                    <p style={{ 
+                      fontSize:11, 
+                      color:T.muted, 
+                      lineHeight:1.5, 
+                      marginBottom:10
+                    }}>
+                      {post.excerpt}
+                    </p>
+                    <div style={{ 
+                      fontSize:10, 
+                      color:T.faint, 
+                      display:"flex", 
+                      alignItems:"center", 
+                      gap:6
+                    }}>
+                      <span>📅</span>
+                      <span>{post.date}</span>
+                      <span style={{ marginLeft:"auto", color:T.cyan }}>Read more →</span>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* ── Tabs ── */}
         <div style={{ display:"flex", margin:"14px 16px 0", background:dark?"#080F1C":"#E6F7F1", borderRadius:13, padding:4, gap:3 }}>
           {tabs.map(t=>(
