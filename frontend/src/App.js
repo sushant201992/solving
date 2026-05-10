@@ -74,13 +74,63 @@ function Slider({ min, max, value, onChange, step = 1 }) {
 }
 
 function InputRow({ label, value, setValue, min, max, step = 1, prefix = "", suffix = "", format }) {
+  const [inputValue, setInputValue] = useState(value.toString());
+  const [isFocused, setIsFocused] = useState(false);
+
+  const handleInputChange = (e) => {
+    const val = e.target.value.replace(/[^0-9.]/g, '');
+    setInputValue(val);
+  };
+
+  const handleInputBlur = () => {
+    setIsFocused(false);
+    let numVal = parseFloat(inputValue);
+    if (isNaN(numVal) || numVal < min) numVal = min;
+    if (numVal > max) numVal = max;
+    // Round to step
+    numVal = Math.round(numVal / step) * step;
+    setValue(numVal);
+    setInputValue(numVal.toString());
+  };
+
+  const handleInputFocus = () => {
+    setIsFocused(true);
+    setInputValue(value.toString());
+  };
+
+  // Sync with external value changes
+  if (!isFocused && inputValue !== value.toString()) {
+    setInputValue(value.toString());
+  }
+
   return (
     <div style={{ marginBottom: 20 }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
         <span style={{ color: C.secondary, fontSize: 13, fontWeight: 500 }}>{label}</span>
-        <div style={{ background: "#0B1825", border: `1px solid ${C.border}`, borderRadius: 8, padding: "5px 12px",
-          color: C.primary, fontSize: 15, fontWeight: 700, fontFamily: "'DM Mono',monospace", minWidth: 110, textAlign: "right" }}>
-          {prefix}{format ? format(value) : value}{suffix}
+        <div style={{ position: "relative", minWidth: 110 }}>
+          <input
+            type="text"
+            value={isFocused ? inputValue : (format ? format(value) : value) + suffix}
+            onChange={handleInputChange}
+            onFocus={handleInputFocus}
+            onBlur={handleInputBlur}
+            style={{
+              width: "100%",
+              background: isFocused ? "#0F1C2A" : "#0B1825",
+              border: `1px solid ${isFocused ? C.cyan : C.border}`,
+              borderRadius: 8,
+              padding: "5px 12px",
+              color: C.primary,
+              fontSize: 15,
+              fontWeight: 700,
+              fontFamily: "'DM Mono',monospace",
+              textAlign: "right",
+              outline: "none",
+              cursor: "text",
+              transition: "all 0.2s ease"
+            }}
+          />
+          {!isFocused && <span style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: C.cyan, fontSize: 15, fontWeight: 700, pointerEvents: "none" }}>{prefix}</span>}
         </div>
       </div>
       <Slider min={min} max={max} step={step} value={value} onChange={setValue} />
@@ -654,23 +704,34 @@ export default function App() {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800&family=DM+Mono:wght@400;500;600&display=swap');
         * { box-sizing:border-box; margin:0; }
-        body { background:#030810; }
+        html { scroll-behavior: smooth; scroll-padding-top: 20px; }
+        body { background:#030810; overflow-x:hidden; }
         input[type=range]{ -webkit-appearance:none; appearance:none; }
-        input[type=range]::-webkit-slider-thumb{ -webkit-appearance:none; width:20px; height:20px; border-radius:50%; background:#fff; border:3px solid ${C.cyan}; box-shadow:0 0 8px ${C.cyan}88; cursor:pointer; }
+        input[type=range]::-webkit-slider-thumb{ -webkit-appearance:none; width:20px; height:20px; border-radius:50%; background:#fff; border:3px solid ${C.cyan}; box-shadow:0 0 8px ${C.cyan}88; cursor:pointer; transition:transform 0.2s ease; }
+        input[type=range]::-webkit-slider-thumb:hover{ transform:scale(1.1); }
+        input[type=range]::-webkit-slider-thumb:active{ transform:scale(0.95); }
         input[type=range]::-moz-range-thumb{ width:20px; height:20px; border-radius:50%; background:#fff; border:3px solid ${C.cyan}; cursor:pointer; }
-        ::-webkit-scrollbar{ width:4px; height:4px; }
+        ::-webkit-scrollbar{ width:6px; height:6px; }
         ::-webkit-scrollbar-track{ background:${C.surface}; }
-        ::-webkit-scrollbar-thumb{ background:#1E293B; border-radius:99px; }
+        ::-webkit-scrollbar-thumb{ background:#1E293B; border-radius:99px; transition:background 0.2s ease; }
+        ::-webkit-scrollbar-thumb:hover{ background:#2E3D4F; }
         @keyframes pulse{ 0%,100%{opacity:1} 50%{opacity:.35} }
         @property --angle { syntax:'<angle>'; initial-value:0deg; inherits:false; }
         @keyframes spin-border { to { --angle:360deg; } }
+        @keyframes fadeIn { from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:translateY(0)} }
         .gemini-border-wrap { width:100%; max-width:480px; min-height:100vh; padding-bottom:50px; background:#030810; }
-        .rgb-card { position:relative; border-radius:16px; padding:2px; background:conic-gradient(from var(--angle),#ff0040,#ff6600,#ffee00,#00ff88,#0088ff,#8800ff,#ff0040); animation:spin-border 3s linear infinite; }
-        .rgb-card::before { content:''; position:absolute; inset:0; border-radius:16px; padding:2px; background:conic-gradient(from var(--angle),#ff0040,#ff6600,#ffee00,#00ff88,#0088ff,#8800ff,#ff0040); filter:blur(7px); opacity:0.55; animation:spin-border 3s linear infinite; z-index:-1; }
+        .rgb-card { position:relative; border-radius:16px; padding:2px; background:conic-gradient(from var(--angle),#ff0040,#ff6600,#ffee00,#00ff88,#0088ff,#8800ff,#ff0040); animation:spin-border 3s linear infinite; will-change:auto; }
+        .rgb-card::before { content:''; position:absolute; inset:0; border-radius:16px; padding:2px; background:conic-gradient(from var(--angle),#ff0040,#ff6600,#ffee00,#00ff88,#0088ff,#8800ff,#ff0040); filter:blur(7px); opacity:0.55; animation:spin-border 3s linear infinite; z-index:-1; will-change:auto; }
         .rgb-card-inner { background:${C.surface}; border-radius:14px; padding:16px; position:relative; z-index:1; }
         .mini-chart-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-        .mini-chart-cell { background:#0A1628; border-radius:12px; padding:10px 8px; border:1px solid #1E293B; }
+        .mini-chart-cell { background:#0A1628; border-radius:12px; padding:10px 8px; border:1px solid #1E293B; transition:transform 0.2s ease, box-shadow 0.2s ease; }
+        .mini-chart-cell:hover { transform:translateY(-2px); box-shadow:0 4px 12px rgba(56,189,248,0.1); }
         .divider { width:100%; height:1px; background:linear-gradient(to right,transparent,${C.border},transparent); margin:4px 0 12px; }
+        .card-section { animation:fadeIn 0.4s ease forwards; }
+        @media (prefers-reduced-motion: reduce) { 
+          *, *::before, *::after { animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; }
+          html { scroll-behavior:auto; }
+        }
       `}</style>
 
       <div className="gemini-border-wrap">
@@ -706,7 +767,7 @@ export default function App() {
         </div>
 
         {/* Input Card */}
-        <div style={{ margin: "14px 16px 0" }}>
+        <div style={{ margin: "14px 16px 0" }} className="card-section">
           <div className="rgb-card">
             <div className="rgb-card-inner" style={{ padding: "18px 16px" }}>
               <div style={{ marginBottom: 18 }}><ReturnGauge rate={currentRate} /></div>
@@ -731,7 +792,7 @@ export default function App() {
         </div>
 
         {/* Future Value Banner */}
-        <div style={{ margin: "12px 16px 0" }}>
+        <div style={{ margin: "12px 16px 0" }} className="card-section">
           <div className="rgb-card">
             <div className="rgb-card-inner" style={{ background: "linear-gradient(135deg,#002233,#003355)", padding: "20px 18px", position: "relative", overflow: "hidden" }}>
               <div style={{ position: "absolute", top: -35, right: -35, width: 130, height: 130, borderRadius: "50%", background: `${C.cyan}08` }} />
@@ -757,7 +818,7 @@ export default function App() {
         </div>
 
         {/* Wealth Badge */}
-        <div style={{ margin: "12px 16px 0" }}>
+        <div style={{ margin: "12px 16px 0" }} className="card-section">
           <div className="rgb-card">
             <div className="rgb-card-inner" style={{ padding: "16px" }}>
               <WealthBadge invested={result.invested} fv={result.fv} />
@@ -768,7 +829,7 @@ export default function App() {
         {/* ═══════════════════════════════════════════════════════════
             4 MINI CHARTS — 2 × 2 GRID inside one rgb-card
             ═══════════════════════════════════════════════════════════ */}
-        <div style={{ margin: "12px 16px 0" }}>
+        <div style={{ margin: "12px 16px 0" }} className="card-section">
           <Card>
             <SH icon="📊" title="Visual Analytics" />
             <div className="mini-chart-grid">
