@@ -25,17 +25,42 @@ const fmt = (val) => {
 const fmtFull = (val) => "₹" + Math.round(val).toLocaleString("en-IN");
 
 function calcSIP(monthly, rate, years) {
-  const n = years * 12, r = rate / 100 / 12;
-  const invested = monthly * n;
-  const fv = r === 0 ? invested : monthly * ((Math.pow(1 + r, n) - 1) / r) * (1 + r);
-  let balance = 0, totalInvested = 0;
+  // Calculate monthly rate and total months
+  const monthlyRate = rate / 12 / 100;
+  const months = years * 12;
+  
+  // SIP Future Value Formula
+  const totalValue = monthlyRate === 0 
+    ? monthly * months 
+    : monthly * ((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate) * (1 + monthlyRate);
+  
+  const totalInvested = monthly * months;
+  const estimatedReturns = totalValue - totalInvested;
+  
+  // Generate month-by-month breakdown for charts and tables
+  let balance = 0;
+  let investedSoFar = 0;
   const rows = [];
-  for (let m = 1; m <= n; m++) {
-    balance = balance * (1 + r) + monthly;
-    totalInvested += monthly;
-    rows.push({ month: m, year: Math.ceil(m / 12), monthlyInvested: monthly, totalInvested, balance, returns: balance - totalInvested });
+  
+  for (let m = 1; m <= months; m++) {
+    balance = balance * (1 + monthlyRate) + monthly;
+    investedSoFar += monthly;
+    rows.push({ 
+      month: m, 
+      year: Math.ceil(m / 12), 
+      monthlyInvested: monthly, 
+      totalInvested: investedSoFar, 
+      balance: balance, 
+      returns: balance - investedSoFar 
+    });
   }
-  return { invested, returns: fv - invested, fv, rows };
+  
+  return { 
+    invested: Math.round(totalInvested), 
+    returns: Math.round(estimatedReturns), 
+    fv: Math.round(totalValue), 
+    rows 
+  };
 }
 function calcStepUp(monthly, rate, years, stepup) {
   const r = rate / 100 / 12;
