@@ -630,7 +630,7 @@ function MonthTable({ rows, mode }) {
 function downloadExcel(result, mode, params) {
   const wb = XLSX.utils.book_new();
   const sum = [
-    ["Kompound — Investment Report"], ["Mode", mode.toUpperCase()], ["Generated", new Date().toLocaleDateString("en-IN")], [],
+    ["1Rupee.Blog — Investment Report"], ["Mode", mode.toUpperCase()], ["Generated", new Date().toLocaleDateString("en-IN")], [],
     ["SUMMARY"], ["Total Invested", result.invested], ["Est. Returns", result.returns], ["Future Value", result.fv],
     ["Wealth Multiplier", (result.fv / result.invested).toFixed(2) + "x"], ["Total Gain %", ((result.returns / result.invested) * 100).toFixed(2) + "%"], [],
     ["PARAMETERS"], ...Object.entries(params).map(([k, v]) => [k, v]),
@@ -646,7 +646,7 @@ function downloadExcel(result, mode, params) {
   const ws2 = XLSX.utils.aoa_to_sheet(detail);
   ws2["!cols"] = detail[0].map(() => ({ wch: 20 }));
   XLSX.utils.book_append_sheet(wb, ws2, "Detail");
-  XLSX.writeFile(wb, `kompound-${mode}.xlsx`);
+  XLSX.writeFile(wb, `1rupee-blog-${mode}.xlsx`);
 }
 
 function Card({ children }) {
@@ -738,9 +738,9 @@ export default function App() {
 
         {/* Header */}
         <div style={{ padding: "22px 16px 0", display: "flex", alignItems: "center", gap: 10 }}>
-          <div style={{ width: 40, height: 40, borderRadius: 12, background: `linear-gradient(135deg,${C.cyan},#0055bb)`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 19, fontWeight: 900, color: "#fff" }}>K</div>
+          <div style={{ width: 40, height: 40, borderRadius: 12, background: `linear-gradient(135deg,${C.cyan},#0055bb)`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 15, fontWeight: 900, color: "#fff" }}>1₹</div>
           <div>
-            <div style={{ fontSize: 20, fontWeight: 800, letterSpacing: -0.5, color: C.primary }}>Kompound</div>
+            <div style={{ fontSize: 18, fontWeight: 800, letterSpacing: -0.3, color: C.primary }}>1Rupee.Blog</div>
             <div style={{ fontSize: 9, color: C.faint, letterSpacing: 1.8, fontWeight: 600 }}>SMART INVESTMENT CALCULATOR</div>
           </div>
           <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 5 }}>
@@ -925,7 +925,7 @@ export default function App() {
         </div>
 
         <div style={{ textAlign: "center", marginTop: 36, color: C.faint, fontSize: 11, paddingBottom: 14, opacity: 0.5 }}>
-          Kompound · Estimates only · Not financial advice
+          1Rupee.Blog · Estimates only · Not financial advice
         </div>
       </div>
     </div>
