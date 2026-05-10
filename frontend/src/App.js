@@ -772,11 +772,11 @@ export default function App() {
               <div style={{ display:"flex", gap:10, overflowX:"auto", scrollbarWidth:"none", msOverflowStyle:"none" }}>
                 {[
                   { 
-                    title: "Understanding SIP Returns",
-                    excerpt: "Learn how systematic investment plans generate compound returns over time",
-                    date: "Dec 15, 2024",
-                    icon: "📈",
-                    tag: "SIP Guide"
+                    title: "BSE's Q4FY26 Results Signal Robust Recovery",
+                    excerpt: "BSE posted stellar 61% YoY surge in PAT to ₹797 crore with revenue soaring 85% to ₹1,564 crore",
+                    date: "May 10, 2026",
+                    tag: "Market News",
+                    thumbnail: "https://customer-assets.emergentagent.com/job_wealth-simulator-71/artifacts/a65uz045_ChatGPT%20Image%20May%2010%2C%202026%2C%2007_19_38%20PM.png"
                   },
                   { 
                     title: "Step-up SIP Strategy",
@@ -805,56 +805,78 @@ export default function App() {
                       background:T.surfaceAlt, 
                       border:`1px solid ${T.border}`, 
                       borderRadius:12, 
-                      padding:14,
+                      padding:0,
                       textDecoration:"none",
                       display:"block",
                       transition:"all 0.2s",
-                      cursor:"pointer"
+                      cursor:"pointer",
+                      overflow:"hidden"
                     }}
                     onMouseEnter={(e) => e.currentTarget.style.transform = "translateY(-2px)"}
                     onMouseLeave={(e) => e.currentTarget.style.transform = "translateY(0)"}
                   >
-                    <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:8 }}>
-                      <span style={{ fontSize:20 }}>{post.icon}</span>
-                      <span style={{ 
-                        fontSize:9, 
-                        color:T.cyan, 
-                        background:`${T.cyan}15`, 
-                        padding:"2px 8px", 
-                        borderRadius:12, 
-                        fontWeight:600,
-                        letterSpacing:0.3
+                    {post.thumbnail ? (
+                      <div style={{ 
+                        width:"100%", 
+                        height:140, 
+                        background:`url(${post.thumbnail}) center/cover no-repeat`,
+                        borderRadius:"12px 12px 0 0"
+                      }} />
+                    ) : (
+                      <div style={{ 
+                        width:"100%", 
+                        height:50, 
+                        display:"flex", 
+                        alignItems:"center", 
+                        justifyContent:"center",
+                        background:`${T.cyan}08`,
+                        borderRadius:"12px 12px 0 0"
                       }}>
-                        {post.tag}
-                      </span>
-                    </div>
-                    <h3 style={{ 
-                      fontSize:13, 
-                      fontWeight:700, 
-                      color:T.primary, 
-                      marginBottom:6, 
-                      lineHeight:1.3
-                    }}>
-                      {post.title}
-                    </h3>
-                    <p style={{ 
-                      fontSize:11, 
-                      color:T.muted, 
-                      lineHeight:1.5, 
-                      marginBottom:10
-                    }}>
-                      {post.excerpt}
-                    </p>
-                    <div style={{ 
-                      fontSize:10, 
-                      color:T.faint, 
-                      display:"flex", 
-                      alignItems:"center", 
-                      gap:6
-                    }}>
-                      <span>📅</span>
-                      <span>{post.date}</span>
-                      <span style={{ marginLeft:"auto", color:T.cyan }}>Read more →</span>
+                        <span style={{ fontSize:32 }}>{post.icon}</span>
+                      </div>
+                    )}
+                    <div style={{ padding:14 }}>
+                      <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:8 }}>
+                        <span style={{ 
+                          fontSize:9, 
+                          color:T.cyan, 
+                          background:`${T.cyan}15`, 
+                          padding:"2px 8px", 
+                          borderRadius:12, 
+                          fontWeight:600,
+                          letterSpacing:0.3
+                        }}>
+                          {post.tag}
+                        </span>
+                      </div>
+                      <h3 style={{ 
+                        fontSize:13, 
+                        fontWeight:700, 
+                        color:T.primary, 
+                        marginBottom:6, 
+                        lineHeight:1.3
+                      }}>
+                        {post.title}
+                      </h3>
+                      <p style={{ 
+                        fontSize:11, 
+                        color:T.muted, 
+                        lineHeight:1.5, 
+                        marginBottom:10
+                      }}>
+                        {post.excerpt}
+                      </p>
+                      <div style={{ 
+                        fontSize:10, 
+                        color:T.faint, 
+                        display:"flex", 
+                        alignItems:"center", 
+                        gap:6
+                      }}>
+                        <span>📅</span>
+                        <span>{post.date}</span>
+                        <span style={{ marginLeft:"auto", color:T.cyan }}>Read more →</span>
+                      </div>
                     </div>
                   </a>
                 ))}
