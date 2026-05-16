@@ -1,0 +1,24 @@
+{
+  "name": "1rupee-blog-app",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Smart investment calculator with blog",
+  "scripts": {
+    "start": "cd frontend && npm start",
+    "build": "cd frontend && npm run build",
+    "test": "cd frontend && npm test",
+    "install-all": "npm install && cd frontend && npm install"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "keywords": [
+    "investment",
+    "calculator",
+    "sip",
+    "finance"
+  ],
+  "author": "",
+  "license": "ISC"
+}
