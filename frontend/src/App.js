@@ -1,5 +1,6 @@
 import { useState, useMemo, useRef, useCallback } from "react";
 import * as XLSX from "xlsx";
+import BlogArticle from "./pages/BlogArticle";
 
 /* ─── Google Analytics Helper ───────────────────────────────────── */
 const trackEvent = (eventName, eventParams = {}) => {
@@ -671,6 +672,8 @@ export default function App() {
 
   const [tab, setTab] = useState("sip");
   const [showTable, setShowTable] = useState(false);
+  const [currentPage, setCurrentPage] = useState("home");
+  const [selectedArticle, setSelectedArticle] = useState(null);
 
   /* SIP */
   const [sipAmount, setSipAmount] = useState(10000);
@@ -720,6 +723,10 @@ export default function App() {
     .mini-chart-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
     .mini-chart-cell { border-radius:12px; padding:10px 8px; }
   `;
+
+  if (currentPage === "article" && selectedArticle) {
+    return <BlogArticle onBack={() => { setCurrentPage("home"); setSelectedArticle(null); }} dark={dark} />;
+  }
 
   return (
     <div style={{ minHeight:"100vh", background:T.bg, fontFamily:"'DM Sans',sans-serif", color:T.primary, display:"flex", justifyContent:"center", transition:"background 0.3s, color 0.3s" }}>
@@ -771,21 +778,30 @@ export default function App() {
               
               <div style={{ display:"flex", gap:10, overflowX:"auto", scrollbarWidth:"none", msOverflowStyle:"none" }}>
                 {[
-                  { 
+                  {
+                    id: "career-switch",
+                    title: "5 Signs You Need to Make the Switch",
+                    excerpt: "Are you experiencing Sunday dread, brain drain, or feeling like a shadow of yourself at work?",
+                    date: "May 16, 2026",
+                    tag: "Career Growth",
+                    thumbnail: "/Gemini_Generated_Image_hdxh8ahdxh8ahdxh.png",
+                    isNew: true
+                  },
+                  {
                     title: "BSE's Q4FY26 Results Signal Robust Recovery",
                     excerpt: "BSE posted stellar 61% YoY surge in PAT to ₹797 crore with revenue soaring 85% to ₹1,564 crore",
                     date: "May 10, 2026",
                     tag: "Market News",
                     thumbnail: "https://customer-assets.emergentagent.com/job_wealth-simulator-71/artifacts/a65uz045_ChatGPT%20Image%20May%2010%2C%202026%2C%2007_19_38%20PM.png"
                   },
-                  { 
+                  {
                     title: "Step-up SIP Strategy",
                     excerpt: "Increase your monthly investments to accelerate wealth creation",
                     date: "Dec 10, 2024",
                     icon: "🚀",
                     tag: "Advanced"
                   },
-                  { 
+                  {
                     title: "Lumpsum vs SIP: Which is Better?",
                     excerpt: "Compare investment strategies for different market conditions",
                     date: "Dec 5, 2024",
@@ -793,41 +809,63 @@ export default function App() {
                     tag: "Comparison"
                   }
                 ].map((post, i) => (
-                  <a 
-                    key={i} 
+                  <a
+                    key={i}
                     href="#"
                     onClick={(e) => {
                       e.preventDefault();
+                      if (post.id === "career-switch") {
+                        setSelectedArticle(post);
+                        setCurrentPage("article");
+                      }
                       trackEvent('blog_article_click', { article_title: post.title });
                     }}
-                    style={{ 
-                      minWidth:260, 
-                      background:T.surfaceAlt, 
-                      border:`1px solid ${T.border}`, 
-                      borderRadius:12, 
+                    style={{
+                      minWidth:260,
+                      background:T.surfaceAlt,
+                      border:`1px solid ${T.border}`,
+                      borderRadius:12,
                       padding:0,
                       textDecoration:"none",
                       display:"block",
                       transition:"all 0.2s",
                       cursor:"pointer",
-                      overflow:"hidden"
+                      overflow:"hidden",
+                      position:"relative"
                     }}
                     onMouseEnter={(e) => e.currentTarget.style.transform = "translateY(-2px)"}
                     onMouseLeave={(e) => e.currentTarget.style.transform = "translateY(0)"}
                   >
+                    {post.isNew && (
+                      <div style={{
+                        position:"absolute",
+                        top:8,
+                        right:8,
+                        background:`${T.emerald}`,
+                        color:"#fff",
+                        padding:"3px 8px",
+                        borderRadius:6,
+                        fontSize:9,
+                        fontWeight:700,
+                        zIndex:10,
+                        letterSpacing:0.5
+                      }}>
+                        NEW
+                      </div>
+                    )}
                     {post.thumbnail ? (
-                      <div style={{ 
-                        width:"100%", 
-                        height:140, 
+                      <div style={{
+                        width:"100%",
+                        height:140,
                         background:`url(${post.thumbnail}) center/cover no-repeat`,
                         borderRadius:"12px 12px 0 0"
                       }} />
                     ) : (
-                      <div style={{ 
-                        width:"100%", 
-                        height:50, 
-                        display:"flex", 
-                        alignItems:"center", 
+                      <div style={{
+                        width:"100%",
+                        height:50,
+                        display:"flex",
+                        alignItems:"center",
                         justifyContent:"center",
                         background:`${T.cyan}08`,
                         borderRadius:"12px 12px 0 0"
@@ -837,40 +875,40 @@ export default function App() {
                     )}
                     <div style={{ padding:14 }}>
                       <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:8 }}>
-                        <span style={{ 
-                          fontSize:9, 
-                          color:T.cyan, 
-                          background:`${T.cyan}15`, 
-                          padding:"2px 8px", 
-                          borderRadius:12, 
+                        <span style={{
+                          fontSize:9,
+                          color:T.cyan,
+                          background:`${T.cyan}15`,
+                          padding:"2px 8px",
+                          borderRadius:12,
                           fontWeight:600,
                           letterSpacing:0.3
                         }}>
                           {post.tag}
                         </span>
                       </div>
-                      <h3 style={{ 
-                        fontSize:13, 
-                        fontWeight:700, 
-                        color:T.primary, 
-                        marginBottom:6, 
+                      <h3 style={{
+                        fontSize:13,
+                        fontWeight:700,
+                        color:T.primary,
+                        marginBottom:6,
                         lineHeight:1.3
                       }}>
                         {post.title}
                       </h3>
-                      <p style={{ 
-                        fontSize:11, 
-                        color:T.muted, 
-                        lineHeight:1.5, 
+                      <p style={{
+                        fontSize:11,
+                        color:T.muted,
+                        lineHeight:1.5,
                         marginBottom:10
                       }}>
                         {post.excerpt}
                       </p>
-                      <div style={{ 
-                        fontSize:10, 
-                        color:T.faint, 
-                        display:"flex", 
-                        alignItems:"center", 
+                      <div style={{
+                        fontSize:10,
+                        color:T.faint,
+                        display:"flex",
+                        alignItems:"center",
                         gap:6
                       }}>
                         <span>📅</span>
